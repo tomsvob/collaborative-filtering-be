@@ -7,18 +7,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 @RestController
 public class LoginController {
+    private final AtomicLong counter = new AtomicLong();
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public UserDTO login(@RequestParam("username") String username) {
         switch (username) {
             case "admin":
-                return new UserDTO(UserType.ADMIN, username);
+                return new UserDTO(counter.incrementAndGet(), UserType.ADMIN, username);
             case "error":
                 return null;
             default:
-                return new UserDTO(UserType.USER, username);
+                return new UserDTO(counter.incrementAndGet(), UserType.USER, username);
         }
     }
 
