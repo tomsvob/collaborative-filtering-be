@@ -1,8 +1,8 @@
 package app.DAO;
 
-import app.Models.Film;
+import app.Models.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserDAO extends JpaRepository<Film, Long> {
+public interface UserDAO extends JpaRepository<AppUser, Long> {
 
 }

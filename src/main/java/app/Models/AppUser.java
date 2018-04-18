@@ -2,24 +2,26 @@ package app.Models;
 
 import app.Enums.UserType;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
-public class User {
+public class AppUser {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
     private UserType userType;
     private String username;
 
-    public User() {
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<Rating> ratings;
+
+    public AppUser() {
     }
 
-    public User(Long id, UserType userType, String username) {
-        this.id = id;
+    public AppUser(UserType userType, String username) {
         this.userType = userType;
         this.username = username;
     }

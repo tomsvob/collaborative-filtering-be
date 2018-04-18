@@ -1,22 +1,23 @@
 package app.Models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Film {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
+
     private String name;
+
+    @OneToMany(mappedBy = "film")
+    private List<Rating> ratings;
 
     public Film() {
     }
 
-    public Film(Long id, String name) {
-        this.id = id;
+    public Film(String name) {
         this.name = name;
     }
 
