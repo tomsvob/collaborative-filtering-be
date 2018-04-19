@@ -36,4 +36,12 @@ public class Film {
     public void setName(String name) {
         this.name = name;
     }
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
+    }
 }
