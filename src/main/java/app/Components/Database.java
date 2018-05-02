@@ -36,8 +36,7 @@ public class Database {
         runQuery(entityManager, userSQL);
         String movieSQL = loadMovies();
         runQuery(entityManager, movieSQL);
-        String ratingSQL = loadRatings();
-        runQuery(entityManager, ratingSQL);
+        loadRatings(entityManager);
         System.out.println("== Database LOADED ==");
     }
 
@@ -101,11 +100,12 @@ public class Database {
         return "INSERT INTO film ( id, name ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";";
     }
 
-    private String loadRatings() {
+    private void loadRatings(EntityManager entityManager) {
         List<String> sqlLines = new ArrayList<>();
         AtomicReference<Long> counter = new AtomicReference<>(1L);
         loadDataFromFile(Paths.get("data/ml-1m/ratings.dat"), (line) -> {
             String[] split = line.split("::");
+
             if (split.length == 4) {
                 Long uid = Long.parseLong(split[0]);
                 Long fid = Long.parseLong(split[1]);
@@ -119,10 +119,15 @@ public class Database {
                 String join = String.join(", ", data);
                 sqlLines.add("( " + join + " )");
                 counter.getAndSet(counter.get() + 1);
+
+                if ((counter.get() % 10000) == 0) {
+                    runQuery(entityManager, "INSERT INTO rating ( id, rating, film_id, app_user_id ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";");
+                    sqlLines.clear();
+                }
             }
         });
 
-        return "INSERT INTO rating ( id, rating, film_id, app_user_id ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";";
+        runQuery(entityManager, "INSERT INTO rating ( id, rating, film_id, app_user_id ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";");
     }
 
     private <E, ID extends Serializable> void storeData(JpaRepository<E, ID> dao, Iterable<E> list) {
