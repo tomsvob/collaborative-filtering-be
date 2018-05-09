@@ -182,7 +182,8 @@ public class SpearmanUser {
         List<RecommendedMovie> recommendedMovies = new ArrayList<>(aggregatedRatings.values());
         recommendedMovies.sort(recommendedMovieComparator);
         this.recommendations.clear();
-        for (RecommendedMovie movie : recommendedMovies.subList(0, spearmanSettings.getNumberOfRecommendations())) {
+        int numOfRecommendedFilms = Math.min(spearmanSettings.getNumberOfRecommendations(), recommendedMovies.size());
+        for (RecommendedMovie movie : recommendedMovies.subList(0, numOfRecommendedFilms)) {
             this.recommendations.add(movie.movieID);
         }
     }

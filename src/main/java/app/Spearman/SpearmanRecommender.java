@@ -36,7 +36,7 @@ public class SpearmanRecommender {
         Collection<SpearmanUser> spearmanUsers = usermap.values();
         for (SpearmanUser u : spearmanUsers) {
             u.recommend(spearmanUsers, spearmanSettings);
-            System.out.printf("SpearmanUser ID: %d Recommendations: %d%n", u.getUserID(), u.getRecommendations().size());
+            System.out.printf("SpearmanUser ID: %d Recommended: %d%n", u.getUserID(), u.getRecommendations().size());
         }
 
         return spearmanUsers;

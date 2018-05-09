@@ -4,6 +4,7 @@ import app.DAO.FilmDAO;
 import app.DAO.RatingDAO;
 import app.DAO.UserDAO;
 import app.DTO.RatingDTO;
+import app.DTO.SpearmanStatsDTO;
 import app.Models.AppUser;
 import app.Models.Film;
 import app.Models.Rating;
@@ -30,7 +31,7 @@ public class AdminService {
         this.filmDAO = filmDAO;
     }
 
-    public void calculateRecommended(SpearmanSettings spearmanSettings) {
+    public SpearmanStatsDTO calculateRecommended(SpearmanSettings spearmanSettings) {
         List<Rating> ratingList = ratingDAO.findAll();
         List<RatingDTO> ratingDTOS = new ArrayList<>();
         for (Rating rating : ratingList) {
@@ -38,13 +39,20 @@ public class AdminService {
             ratingDTOS.add(aRating);
         }
 
+        int usersChanged = 0;
+        int filmsRecommended = 0;
+
         Collection<SpearmanUser> spearmanUsers = SpearmanRecommender.calculateRecommendedMovies(ratingDTOS, spearmanSettings);
         for (SpearmanUser spearmanUser : spearmanUsers) {
             AppUser appUser = userDAO.getOne(spearmanUser.getUserID());
             ArrayList<Long> filmIds = spearmanUser.getRecommendations();
             List<Film> recommendedFilms = filmDAO.findAll(filmIds);
             appUser.setRecommendedFilms(recommendedFilms);
+            filmsRecommended += recommendedFilms.size();
             userDAO.save(appUser);
+            usersChanged++;
+            System.out.printf("Updated user: %d%n", appUser.getId());
         }
+        return new SpearmanStatsDTO(usersChanged, filmsRecommended);
     }
 }
