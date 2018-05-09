@@ -18,6 +18,9 @@ public class AppUser {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Rating> ratings;
 
+    @ManyToMany()
+    private List<Film> recommendedFilms;
+
     public AppUser() {
     }
 
@@ -56,5 +59,13 @@ public class AppUser {
 
     public void setRatings(List<Rating> ratings) {
         this.ratings = ratings;
+    }
+
+    public List<Film> getRecommendedFilms() {
+        return recommendedFilms;
+    }
+
+    public void setRecommendedFilms(List<Film> recommendedFilms) {
+        this.recommendedFilms = recommendedFilms;
     }
 }

@@ -1,0 +1,25 @@
+package app.Algorithms;
+
+public class Settings {
+    private int NUMBER_OF_SIMILAR_USERS = 25;
+    private int NUMBER_OF_RECOMMENDATIONS = 10;
+    private int NUMBER_OF_REQUIRED_MATCHES = 7;
+
+    public Settings(int NUMBER_OF_SIMILAR_USERS, int NUMBER_OF_RECOMMENDATIONS, int NUMBER_OF_REQUIRED_MATCHES) {
+        this.NUMBER_OF_SIMILAR_USERS = NUMBER_OF_SIMILAR_USERS;
+        this.NUMBER_OF_RECOMMENDATIONS = NUMBER_OF_RECOMMENDATIONS;
+        this.NUMBER_OF_REQUIRED_MATCHES = NUMBER_OF_REQUIRED_MATCHES;
+    }
+
+    public int getNUMBER_OF_SIMILAR_USERS() {
+        return NUMBER_OF_SIMILAR_USERS;
+    }
+
+    public int getNUMBER_OF_RECOMMENDATIONS() {
+        return NUMBER_OF_RECOMMENDATIONS;
+    }
+
+    public int getNUMBER_OF_REQUIRED_MATCHES() {
+        return NUMBER_OF_REQUIRED_MATCHES;
+    }
+}

@@ -34,12 +34,16 @@ public class Database {
     public void insertDataToDatabase() {
         String userSQL = loadUsers();
         runQuery(entityManager, userSQL);
+
+        String adminSQL = "INSERT INTO app_user ( id, user_type, username ) VALUES ( 123456789, 'ADMIN', 'admin');";
+
+        runQuery(entityManager, adminSQL);
 //        String movieSQL = loadMovies("data/ml-1m/movies.dat", "::");
-        String movieSQL = loadMovies("data/ml-latest-small/movies.csv", ",");
+        String movieSQL = loadMovies("data/ml-latest-small/movies.csv");
 
         runQuery(entityManager, movieSQL);
 //        loadRatings(entityManager, "data/ml-1m/ratings.dat", "::");
-        loadRatings(entityManager, "data/ml-latest-small/ratings.csv", ",");
+        loadRatings(entityManager, "data/ml-latest-small/ratings.csv");
         System.out.println("== Database LOADED ==");
     }
 
@@ -68,46 +72,42 @@ public class Database {
         List<String> sqlLines = new ArrayList<>();
         loadDataFromFile(Paths.get("data/ml-1m/users.dat"), line -> {
             String[] split = line.split("::");
-            if (split.length == 5) {
-                Long id = Long.parseLong(split[0]);
-                DataGender gender = DataGender.valueOf(split[1]);
-                String name = generateUserName(getGender(gender));
-                List<String> data = new ArrayList<>();
-                data.add(id.toString());
-                data.add(String.format("'%s'", UserType.USER.toString()));
-                data.add(String.format("'%s'", name));
-                String join = String.join(", ", data);
-                sqlLines.add("( " + join + " )");
-            }
+            Long id = Long.parseLong(split[0]);
+            DataGender gender = DataGender.valueOf(split[1]);
+            String name = generateUserName(getGender(gender));
+            List<String> data = new ArrayList<>();
+            data.add(id.toString());
+            data.add(String.format("'%s'", UserType.USER.toString()));
+            data.add(String.format("'%s'", name));
+            String join = String.join(", ", data);
+            sqlLines.add("( " + join + " )");
         });
 
         return "INSERT INTO app_user ( id, user_type, username ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";";
     }
 
-    private String loadMovies(String fileName, String separator) {
+    private String loadMovies(String fileName) {
         List<String> sqlLines = new ArrayList<>();
         loadDataFromFile(Paths.get(fileName), line -> {
-            String[] split = line.split(separator);
-            if (split.length == 3) {
-                Long id = Long.parseLong(split[0]);
-                String title = split[1];
+            String[] split = line.split("::");
+            Long id = Long.parseLong(split[0]);
+            String title = split[1];
 
-                List<String> data = new ArrayList<>();
-                data.add(id.toString());
-                data.add(String.format("'%s'", title.replace("'", "''")));
-                String join = String.join(", ", data);
-                sqlLines.add("( " + join + " )");
-            }
+            List<String> data = new ArrayList<>();
+            data.add(id.toString());
+            data.add(String.format("'%s'", title.replace("'", "''")));
+            String join = String.join(", ", data);
+            sqlLines.add("( " + join + " )");
         });
 
         return "INSERT INTO film ( id, name ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";";
     }
 
-    private void loadRatings(EntityManager entityManager, String fileName, String separator) {
+    private void loadRatings(EntityManager entityManager, String fileName) {
         List<String> sqlLines = new ArrayList<>();
         AtomicReference<Long> counter = new AtomicReference<>(1L);
         loadDataFromFile(Paths.get(fileName), (line) -> {
-            String[] split = line.split(separator);
+            String[] split = line.split("::");
 
             if (split.length == 4) {
                 Long uid = Long.parseLong(split[0]);
@@ -123,7 +123,7 @@ public class Database {
                 sqlLines.add("( " + join + " )");
                 counter.getAndSet(counter.get() + 1);
 
-                if ((counter.get() % 10000) == 0) {
+                if ((counter.get() % 10000) == 0 && counter.get() < 11000) {
                     String sql = String.format("INSERT INTO rating ( id, rating, film_id, app_user_id ) VALUES%s%s;", System.lineSeparator(), String.join("," + System.lineSeparator(), sqlLines));
                     Query nativeQuery = entityManager.createNativeQuery(sql);
                     nativeQuery.executeUpdate();
@@ -133,7 +133,7 @@ public class Database {
             }
         });
 
-        runQuery(entityManager, "INSERT INTO rating ( id, rating, film_id, app_user_id ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";");
+//        runQuery(entityManager, "INSERT INTO rating ( id, rating, film_id, app_user_id ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";");
     }
 
     private <E, ID extends Serializable> void storeData(JpaRepository<E, ID> dao, Iterable<E> list) {

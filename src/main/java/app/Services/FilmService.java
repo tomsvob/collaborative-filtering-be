@@ -38,10 +38,10 @@ public class FilmService {
                 if (ratings.size() > 0) {
                     ratedFilmDTO.setRating(ratings.get(0).getRating());
                 } else {
-                    ratedFilmDTO.setRating(0);
+                    ratedFilmDTO.setRating(0.0);
                 }
             } else {
-                ratedFilmDTO.setRating(0);
+                ratedFilmDTO.setRating(0.0);
             }
 
             ratedFilms.add(ratedFilmDTO);
@@ -66,7 +66,7 @@ public class FilmService {
     }
 
     public List<RatedFilmDTO> getRecommendedFilmsForUser(Long uid) {
-        List<Film> films = filmDAO.findAll().subList(10, 20);
+        List<Film> films = userDAO.findOne(uid).getRecommendedFilms();
 
         return enhanceWithRates(films, uid);
     }

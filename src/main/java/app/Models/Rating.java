@@ -1,11 +1,16 @@
 package app.Models;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Entity
 public class Rating {
+    static private final AtomicReference<Long> counter = new AtomicReference<>(200000L);
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
@@ -25,6 +30,14 @@ public class Rating {
     }
 
     public Rating(Film film, AppUser user, Double rating) {
+        this.id = counter.getAndSet(counter.get() + 1);
+        this.film = film;
+        this.user = user;
+        this.rating = rating;
+    }
+
+    public Rating(Long id, Film film, AppUser user, Double rating) {
+        this.id = id;
         this.film = film;
         this.user = user;
         this.rating = rating;

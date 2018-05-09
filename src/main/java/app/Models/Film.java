@@ -14,6 +14,9 @@ public class Film {
     @OneToMany(mappedBy = "film")
     private List<Rating> ratings;
 
+    @ManyToMany(mappedBy = "recommendedFilms")
+    private List<AppUser> recommendedFor;
+
     public Film() {
     }
 
