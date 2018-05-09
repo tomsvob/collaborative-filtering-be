@@ -18,7 +18,7 @@ public class RatingController {
     }
 
     @PostMapping("/update-rating")
-    public ResponseEntity setRating(@RequestParam Long uid, @RequestParam Long fid, @RequestParam int rating) {
+    public ResponseEntity setRating(@RequestParam Long uid, @RequestParam Long fid, @RequestParam Double rating) {
         ratingService.setRating(uid, fid, rating);
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -1,13 +1,13 @@
 package app.DTO;
 
 public class RatedFilmDTO extends FilmDTO {
-    private int rating;
+    private Double rating;
 
-    public int getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 }

@@ -34,9 +34,12 @@ public class Database {
     public void insertDataToDatabase() {
         String userSQL = loadUsers();
         runQuery(entityManager, userSQL);
-        String movieSQL = loadMovies();
+//        String movieSQL = loadMovies("data/ml-1m/movies.dat", "::");
+        String movieSQL = loadMovies("data/ml-latest-small/movies.csv", ",");
+
         runQuery(entityManager, movieSQL);
-        loadRatings(entityManager);
+//        loadRatings(entityManager, "data/ml-1m/ratings.dat", "::");
+        loadRatings(entityManager, "data/ml-latest-small/ratings.csv", ",");
         System.out.println("== Database LOADED ==");
     }
 
@@ -81,10 +84,10 @@ public class Database {
         return "INSERT INTO app_user ( id, user_type, username ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";";
     }
 
-    private String loadMovies() {
+    private String loadMovies(String fileName, String separator) {
         List<String> sqlLines = new ArrayList<>();
-        loadDataFromFile(Paths.get("data/ml-1m/movies.dat"), line -> {
-            String[] split = line.split("::");
+        loadDataFromFile(Paths.get(fileName), line -> {
+            String[] split = line.split(separator);
             if (split.length == 3) {
                 Long id = Long.parseLong(split[0]);
                 String title = split[1];
@@ -100,16 +103,16 @@ public class Database {
         return "INSERT INTO film ( id, name ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";";
     }
 
-    private void loadRatings(EntityManager entityManager) {
+    private void loadRatings(EntityManager entityManager, String fileName, String separator) {
         List<String> sqlLines = new ArrayList<>();
         AtomicReference<Long> counter = new AtomicReference<>(1L);
-        loadDataFromFile(Paths.get("data/ml-1m/ratings.dat"), (line) -> {
-            String[] split = line.split("::");
+        loadDataFromFile(Paths.get(fileName), (line) -> {
+            String[] split = line.split(separator);
 
             if (split.length == 4) {
                 Long uid = Long.parseLong(split[0]);
                 Long fid = Long.parseLong(split[1]);
-                Integer rating = Integer.parseInt(split[2]);
+                Double rating = Double.parseDouble(split[2]);
 
                 List<String> data = new ArrayList<>();
                 data.add(counter.get().toString());
@@ -121,7 +124,10 @@ public class Database {
                 counter.getAndSet(counter.get() + 1);
 
                 if ((counter.get() % 10000) == 0) {
-                    runQuery(entityManager, "INSERT INTO rating ( id, rating, film_id, app_user_id ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";");
+                    String sql = String.format("INSERT INTO rating ( id, rating, film_id, app_user_id ) VALUES%s%s;", System.lineSeparator(), String.join("," + System.lineSeparator(), sqlLines));
+                    Query nativeQuery = entityManager.createNativeQuery(sql);
+                    nativeQuery.executeUpdate();
+                    System.out.printf("== LOADED %d ==%n", counter.get());
                     sqlLines.clear();
                 }
             }

@@ -14,17 +14,17 @@ public class Rating {
     @ManyToOne
     @JoinColumn(name = "app_user_id")
     private AppUser user;
-    private int rating;
+    private Double rating;
 
     public Rating() {
 
     }
 
-    public Rating(int rating) {
+    public Rating(Double rating) {
         this.rating = rating;
     }
 
-    public Rating(Film film, AppUser user, int rating) {
+    public Rating(Film film, AppUser user, Double rating) {
         this.film = film;
         this.user = user;
         this.rating = rating;
@@ -54,11 +54,11 @@ public class Rating {
         this.user = user;
     }
 
-    public int getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 }
