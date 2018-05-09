@@ -1,11 +1,11 @@
-package app.Algorithms;
+package app.Spearman;
 
-public class RecommendedMovie {
+class RecommendedMovie {
 
     long movieID;
     double aggregatedRating;
 
-    public RecommendedMovie(long movieID, double aggregatedRating) {
+    RecommendedMovie(long movieID, double aggregatedRating) {
         this.movieID = movieID;
         this.aggregatedRating = aggregatedRating;
     }

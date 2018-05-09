@@ -123,7 +123,7 @@ public class Database {
                 sqlLines.add("( " + join + " )");
                 counter.getAndSet(counter.get() + 1);
 
-                if ((counter.get() % 10000) == 0 && counter.get() < 11000) {
+                if ((counter.get() % 10000) == 0) {
                     String sql = String.format("INSERT INTO rating ( id, rating, film_id, app_user_id ) VALUES%s%s;", System.lineSeparator(), String.join("," + System.lineSeparator(), sqlLines));
                     Query nativeQuery = entityManager.createNativeQuery(sql);
                     nativeQuery.executeUpdate();
@@ -133,7 +133,7 @@ public class Database {
             }
         });
 
-//        runQuery(entityManager, "INSERT INTO rating ( id, rating, film_id, app_user_id ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";");
+        runQuery(entityManager, "INSERT INTO rating ( id, rating, film_id, app_user_id ) VALUES" + System.lineSeparator() + String.join("," + System.lineSeparator(), sqlLines) + ";");
     }
 
     private <E, ID extends Serializable> void storeData(JpaRepository<E, ID> dao, Iterable<E> list) {
