@@ -18,7 +18,7 @@ public class AdminController {
     }
 
     @PostMapping("/calculate-recommended")
-    public SpearmanStatsDTO calculateRecommended(@RequestParam int numOfSimilarUsers, @RequestParam int numOfRecommended, @RequestParam int minNumOfMatches) {
-        return adminService.calculateRecommended(new SpearmanSettings(numOfSimilarUsers, numOfRecommended, minNumOfMatches));
+    public SpearmanStatsDTO calculateRecommended(@RequestParam int numOfSimilarUsers, @RequestParam int numOfRecommended, @RequestParam int minNumOfMatches, @RequestParam int minNumOfRatings) {
+        return adminService.calculateRecommended(new SpearmanSettings(numOfSimilarUsers, numOfRecommended, minNumOfMatches, minNumOfRatings));
     }
 }

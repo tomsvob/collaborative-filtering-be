@@ -79,7 +79,7 @@ public class SpearmanUser {
      * @param other (other user)
      * @return double - spearman rank <-1,1> or -2 in case of insufficient data present.
      */
-    private SimilarUser calculateSpearmanRank(SpearmanUser other) {
+    private SimilarUser calculateSpearmanRank(SpearmanUser other, SpearmanSettings spearmanSettings) {
         // get ratings from both users
         ArrayList<RatingDTO> otherRatings = other.getRatings();
         // get user rated movies intersection (eliminate nonmutual ratings)
@@ -102,7 +102,7 @@ public class SpearmanUser {
 
 
         // if the sample is sufficiently large (at least 10 shared movie ratings), calculate spearman
-        if (userSharedRatings.size() <= 10) {
+        if (userSharedRatings.size() <= spearmanSettings.getNumberOfRequiredMatches()) {
 
             // calculate spearman
             double d = 0;
@@ -132,10 +132,10 @@ public class SpearmanUser {
      */
     void recommend(Collection<SpearmanUser> spearmanUsers, SpearmanSettings spearmanSettings) {
         // find x most similar spearmanUsers
-        PriorityQueue<SimilarUser> similarQueue = new PriorityQueue<>(10, similarUserComparator);
+        PriorityQueue<SimilarUser> similarQueue = new PriorityQueue<>(spearmanSettings.getNumberOfSimilarUsers(), similarUserComparator);
 
         for (SpearmanUser u : spearmanUsers) {
-            SimilarUser su = calculateSpearmanRank(u);
+            SimilarUser su = calculateSpearmanRank(u, spearmanSettings);
             if (similarQueue.size() < spearmanSettings.getNumberOfSimilarUsers()) {
                 similarQueue.add(su);
             } else if (su.getSpearmanRank() > similarQueue.peek().getSpearmanRank()) {
@@ -173,8 +173,7 @@ public class SpearmanUser {
                 // calculate average rating
                 double averageRating = rating / ctr;
 
-                // TODO experiment with required similarity rate (currently 40%)
-                if (ctr > spearmanSettings.getNumberOfRequiredMatches())
+                if (ctr > spearmanSettings.getNumberOfRequiredRatingsFromSimilarUsers())
                     aggregatedRatings.put(movieid, new RecommendedMovie(movieid, averageRating)); //
             }
         }
