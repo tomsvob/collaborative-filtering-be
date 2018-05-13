@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface FilmDAO extends JpaRepository<Film, Long> {
 
-    List<Film> findByNameContaining(String query);
+    List<Film> findByNameContainingIgnoreCase(String query);
 }

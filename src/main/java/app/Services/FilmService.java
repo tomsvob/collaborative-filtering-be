@@ -72,7 +72,7 @@ public class FilmService {
     }
 
     public List<RatedFilmDTO> searchFilms(Long uid, String query) {
-        List<Film> films = filmDAO.findByNameContaining(query);
+        List<Film> films = filmDAO.findByNameContainingIgnoreCase(query);
 
         return enhanceWithRates(films, uid);
     }
