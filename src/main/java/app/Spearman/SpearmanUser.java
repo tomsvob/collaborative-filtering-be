@@ -39,6 +39,7 @@ public class SpearmanUser {
     }
 
     private Comparator<SimilarUser> similarUserComparator = (o1, o2) -> -1 * Double.compare(o1.getSpearmanRank(), o2.getSpearmanRank());
+    private Comparator<SimilarUser> similarUserIdComparator = (o1, o2) -> Long.compare(o1.getSpearmanUser().userid, o2.getSpearmanUser().userid);
     private Comparator<RecommendedMovie> recommendedMovieComparator = Comparator.comparingDouble(o -> o.aggregatedRating);
 
     public SpearmanUser(long userid) {
@@ -144,10 +145,12 @@ public class SpearmanUser {
             }
         }
 
-        // aggregate their ratings and find best recommendations
-        ArrayList<SimilarUser> similarUsers = new ArrayList<>();
-        while (!similarQueue.isEmpty()) {
-            similarUsers.add(similarQueue.poll());
+        ArrayList<SimilarUser> similarUsers = new ArrayList<>(similarQueue);
+        similarUsers.sort(similarUserIdComparator);
+
+        System.out.print("Similar Users: ");
+        for (SimilarUser user : similarUsers) {
+            System.out.printf("%d ", user.getSpearmanUser().userid);
         }
 
         HashMap<Long, RecommendedMovie> aggregatedRatings = new HashMap<>();
