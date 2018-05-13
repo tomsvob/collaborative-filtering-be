@@ -119,7 +119,7 @@ public class SpearmanUser {
                 int sqabs = absval * absval;
                 d += sqabs;
             }
-            spearman = 1 - (d / (userSharedRatings.size() * ((userSharedRatings.size() * userSharedRatings.size()) - 1)));
+            spearman = 1d - (d / (userSharedRatings.size() * ((userSharedRatings.size() * userSharedRatings.size()) - 1d)));
 
         }
         // return spearman
@@ -137,11 +137,13 @@ public class SpearmanUser {
 
         for (SpearmanUser u : spearmanUsers) {
             SimilarUser su = calculateSpearmanRank(u, spearmanSettings);
-            if (similarQueue.size() < spearmanSettings.getNumberOfSimilarUsers()) {
-                similarQueue.add(su);
-            } else if (su.getSpearmanRank() > similarQueue.peek().getSpearmanRank()) {
-                similarQueue.poll();
-                similarQueue.add(su);
+            if (su.getSpearmanRank() > spearmanSettings.getSimilarityThreshold()) {
+                if (similarQueue.size() < spearmanSettings.getNumberOfSimilarUsers()) {
+                    similarQueue.add(su);
+                } else if (su.getSpearmanRank() > similarQueue.peek().getSpearmanRank()) {
+                    similarQueue.poll();
+                    similarQueue.add(su);
+                }
             }
         }
 
