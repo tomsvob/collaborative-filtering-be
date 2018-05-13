@@ -42,7 +42,12 @@ public class AdminService {
         int usersChanged = 0;
         int filmsRecommended = 0;
 
+        long startTimeMs = System.currentTimeMillis();
         Collection<SpearmanUser> spearmanUsers = SpearmanRecommender.calculateRecommendedMovies(ratingDTOS, spearmanSettings);
+        long endTimeMs = System.currentTimeMillis();
+        long runTimeS = (endTimeMs - startTimeMs) / 1000;
+        System.out.printf("Calculation took: %d' %d\"%n", runTimeS / 60, runTimeS % 60);
+
         for (SpearmanUser spearmanUser : spearmanUsers) {
             AppUser appUser = userDAO.getOne(spearmanUser.getUserID());
             ArrayList<Long> filmIds = spearmanUser.getRecommendations();
