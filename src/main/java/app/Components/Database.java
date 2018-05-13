@@ -32,18 +32,18 @@ public class Database {
 
     @Transactional
     public void insertDataToDatabase() {
-        String userSQL = loadUsers();
+        String userSQL = loadUsers("data/ml-latest-small/users.dat");
         runQuery(entityManager, userSQL);
 
         String adminSQL = "INSERT INTO app_user ( id, user_type, username ) VALUES ( 123456789, 'ADMIN', 'admin');";
 
         runQuery(entityManager, adminSQL);
 //        String movieSQL = loadMovies("data/ml-1m/movies.dat", "::");
-        String movieSQL = loadMovies("data/ml-latest-small/movies.csv");
+        String movieSQL = loadMovies("data/ml-latest-small/movies.dat");
 
         runQuery(entityManager, movieSQL);
 //        loadRatings(entityManager, "data/ml-1m/ratings.dat", "::");
-        loadRatings(entityManager, "data/ml-latest-small/ratings.csv");
+        loadRatings(entityManager, "data/ml-latest-small/ratings.dat");
         System.out.println("== Database LOADED ==");
     }
 
@@ -68,9 +68,9 @@ public class Database {
         }
     }
 
-    private String loadUsers() {
+    private String loadUsers(String fileName) {
         List<String> sqlLines = new ArrayList<>();
-        loadDataFromFile(Paths.get("data/ml-1m/users.dat"), line -> {
+        loadDataFromFile(Paths.get(fileName), line -> {
             String[] split = line.split("::");
             Long id = Long.parseLong(split[0]);
             DataGender gender = DataGender.valueOf(split[1]);
